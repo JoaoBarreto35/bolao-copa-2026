@@ -24,7 +24,7 @@ export function HomePage({ match, guesses, isAdmin, loading, onTogglePaid, onDel
       <section className="hero-card">
         <div className="hero-copy">
           <span className="eyebrow">Copa do Mundo 2026 • Bolão da família</span>
-          <h1>O Brasil em campo, a família toda secando e torcendo.</h1>
+          <h1>O Brasil em campo, e a familia Barreto torcendo.</h1>
           <p>
             Cada palpite custa R$ 10. Se duas ou mais pessoas acertarem o placar, o prêmio é dividido igualmente.
           </p>
