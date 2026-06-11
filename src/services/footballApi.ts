@@ -103,13 +103,24 @@ function parseScore(score?: string | null): number | null {
 }
 
 function parseStartsAt(event: SportsDbEvent): string {
-  if (event.strTimestamp) return event.strTimestamp;
+  let dateTimeString = event.strTimestamp;
 
-  const date = event.dateEvent ?? '2026-06-13';
-  const time = event.strTime?.slice(0, 8) ?? '22:00:00';
+  if (!dateTimeString) {
+    const date = event.dateEvent ?? '2026-06-13';
+    const time = event.strTime?.slice(0, 8) ?? '19:00:00';
+    dateTimeString = `${date}T${time}Z`;
+  }
 
-  return `${date}T${time}Z`;
+  // Converte a string para um objeto Date
+  const dateObj = new Date(dateTimeString);
+
+  // Subtrai 3 horas (3 horas * 60 min * 60 seg * 1000 ms = 10800000)
+  dateObj.setTime(dateObj.getTime() - 10800000);
+
+  // Retorna no formato ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+  return dateObj.toISOString();
 }
+
 
 function statusFromEvent(event: SportsDbEvent): MatchStatus {
   const status = `${event.strStatus ?? ''} ${event.strProgress ?? ''}`.toLowerCase();
