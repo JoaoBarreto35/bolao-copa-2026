@@ -23,8 +23,8 @@ export function HomePage({ match, guesses, isAdmin, loading, onTogglePaid, onDel
     <main className="page-grid">
       <section className="hero-card">
         <div className="hero-copy">
-          <span className="eyebrow">Copa do Mundo 2026 • Bolão da família</span>
-          <h1>O Brasil em campo, a família toda secando e torcendo.</h1>
+          <span className="eyebrow">Copa do Mundo 2026 • Bolão da família Barreto</span>
+          <h1>Rumo ao Hexa.</h1>
           <p>
             Cada palpite custa R$ 10. Se duas ou mais pessoas acertarem o placar, o prêmio é dividido igualmente.
           </p>
