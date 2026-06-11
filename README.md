@@ -1,46 +1,58 @@
-# Getting Started with Create React App
+# Bolão Copa 2026 🇧🇷
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+App React + TypeScript + PWA simples para bolão familiar dos jogos do Brasil na Copa do Mundo 2026.
 
-## Available Scripts
+## Rodar local
 
-In the project directory, you can run:
+```bash
+npm install
+cp .env.example .env
+npm start
+```
 
-### `npm start`
+## Supabase
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. Crie um projeto no Supabase.
+2. Vá em SQL Editor.
+3. Rode o arquivo `supabase/schema.sql`.
+4. Em Authentication > Users, crie seu usuário admin manualmente.
+5. Preencha `.env` com `REACT_APP_SUPABASE_URL` e `REACT_APP_SUPABASE_ANON_KEY`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Sem login: qualquer pessoa vê os palpites e o bolão.  
+Com login: você consegue adicionar, editar pagamento e excluir palpites.
 
-### `npm test`
+## API de jogos/placar
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+O app tem fallback local dos jogos do Brasil na fase de grupos. Se preencher `REACT_APP_FOOTBALL_API_KEY`, ele tenta atualizar placar e status pela TheSportsDB gratuita.
 
-### `npm run build`
+A chave no front-end fica visível. Para uso familiar é aceitável; para produção pública, use uma Edge Function no Supabase como proxy.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deploy
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Funciona em Netlify/Vercel. Configure as mesmas variáveis de ambiente no painel da hospedagem.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## API de escudos e placar ao vivo
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+O app já está preparado para usar a API-FOOTBALL / API-Sports. Ela busca os jogos do Brasil na Copa do Mundo 2026, placar, status ao vivo e logos das seleções quando a chave estiver preenchida.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Crie uma conta em API-Sports / API-FOOTBALL.
+2. Copie sua chave de API.
+3. No arquivo `.env`, preencha:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```env
+REACT_APP_THESPORTSDB_API_KEY=123
+REACT_APP_THESPORTSDB_WORLD_CUP_LEAGUE_ID=4429
+REACT_APP_WORLD_CUP_SEASON=2026
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Depois reinicie o servidor com `npm run dev`.
 
-## Learn More
+Observação: como a chave fica no front-end, ela fica visível no navegador. Para esse bolão familiar tudo bem, mas se o site viralizar, o ideal é criar uma Edge Function no Supabase para esconder a chave.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## API gratuita de jogos
+
+A integração usa a TheSportsDB v1, que tem chave pública gratuita `123`. O app busca a temporada da Copa do Mundo e também consulta os dias dos jogos do Brasil. Quando a API retornar badges/logos e placar, o app mostra automaticamente. Se a API falhar, ele mantém os jogos fallback do Brasil para o bolão não parar.
+
+Observação: por ser gratuita, essa API pode ter atraso no placar ao vivo e limites de requisição. Para bolão familiar, é a opção mais simples e sem custo.
