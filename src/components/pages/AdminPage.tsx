@@ -1,9 +1,9 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { GuessForm } from '../components/GuessForm';
-import { MatchCard } from '../components/MatchCard';
-import { isSupabaseConfigured } from '../services/supabaseClient';
-import { Guess, Match, NewGuess } from '../types';
-import { buildWhatsAppGuessesText, copyTextToClipboard } from '../utils/share';
+import { GuessForm } from '../GuessForm';
+import { MatchCard } from '../MatchCard';
+import { isSupabaseConfigured } from '../../services/supabaseClient';
+import { Guess, Match, NewGuess } from '../../types';
+import { buildWhatsAppGuessesText, copyTextToClipboard } from '../../utils/share';
 
 type AdminPageProps = {
   isAdmin: boolean;

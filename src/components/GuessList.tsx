@@ -27,9 +27,14 @@ export function GuessList({ guesses, match, isAdmin, winnerIds, onTogglePaid, on
 
         return (
           <article key={guess.id} className={`guess-card ${isWinner ? 'winner' : ''} ${isExactWhileLive ? 'alive' : ''}`}>
-            <div>
+            <div className="guess-main">
               <strong>{guess.person_name}</strong>
-              <span>{guess.home_score} × {guess.away_score}</span>
+
+              <div className="guess-matchup" aria-label={`Palpite: ${match.homeTeam.shortName} ${guess.home_score} a ${guess.away_score} ${match.awayTeam.shortName}`}>
+                <span className="guess-team">{match.homeTeam.shortName}</span>
+                <span className="guess-score">{guess.home_score} × {guess.away_score}</span>
+                <span className="guess-team">{match.awayTeam.shortName}</span>
+              </div>
             </div>
 
             <div className="guess-badges">

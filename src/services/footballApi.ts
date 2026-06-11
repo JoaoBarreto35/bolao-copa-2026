@@ -1,17 +1,13 @@
 import { FALLBACK_BRAZIL_MATCHES, TEAMS } from '../data';
-import { Match, MatchStatus, Team } from '../types';
+import { Match, MatchStatus, Team, TeamCode } from '../types';
 
 /**
  * Integração GRATUITA com TheSportsDB.
  *
- * Motivo da troca:
- * - API-FOOTBALL/API-Sports costuma exigir plano/chave com limite comercial.
- * - TheSportsDB tem chave pública gratuita "123" para API v1.
- * - Ela fornece agenda, placar quando disponível e URLs de badges/logos.
- *
- * Observação honesta:
- * - API gratuita pode ter atraso e limite.
- * - Se ela falhar, o app usa FALLBACK_BRAZIL_MATCHES e continua funcionando.
+ * Observações:
+ * - A chave pública gratuita padrão é "123".
+ * - A base é colaborativa, então algum jogo/logo pode vir incompleto.
+ * - Se a API falhar ou vier parcial, o app usa o fallback local e continua funcionando.
  */
 const SPORTS_DB_BASE_URL = 'https://www.thesportsdb.com/api/v1/json';
 const SPORTS_DB_KEY = process.env.REACT_APP_THESPORTSDB_API_KEY ?? '123';
@@ -46,30 +42,50 @@ type SportsDbEventsResponse = {
   event?: SportsDbEvent[] | null;
 };
 
+type SportsDbTeam = {
+  strTeam?: string | null;
+  strTeamBadge?: string | null;
+  strTeamLogo?: string | null;
+};
+
+type SportsDbTeamsResponse = {
+  teams?: SportsDbTeam[] | null;
+};
+
+const KNOWN_TEAM_NAMES: Record<TeamCode, string[]> = {
+  BRA: ['Brazil', 'Brasil'],
+  MAR: ['Morocco', 'Marrocos'],
+  HAI: ['Haiti'],
+  SCO: ['Scotland', 'Escócia', 'Escocia'],
+  UNK: []
+};
+
+const teamLogoCache = new Map<TeamCode, string | null>();
+
 function compactImage(url?: string | null): string | null {
   if (!url) return null;
   if (url.endsWith('/preview')) return url;
   return `${url}/preview`;
 }
 
-function guessTeam(name: string, logoUrl?: string | null): Team {
+function identifyTeamCode(name: string): TeamCode {
   const normalized = name.toLowerCase();
 
-  if (normalized.includes('brazil') || normalized.includes('brasil')) {
-    return { ...TEAMS.BRA, logoUrl: compactImage(logoUrl) };
-  }
+  if (normalized.includes('brazil') || normalized.includes('brasil')) return 'BRA';
+  if (normalized.includes('morocco') || normalized.includes('marrocos')) return 'MAR';
+  if (normalized.includes('haiti')) return 'HAI';
+  if (normalized.includes('scotland') || normalized.includes('escócia') || normalized.includes('escocia')) return 'SCO';
 
-  if (normalized.includes('morocco') || normalized.includes('marrocos')) {
-    return { ...TEAMS.MAR, logoUrl: compactImage(logoUrl) };
-  }
+  return 'UNK';
+}
 
-  if (normalized.includes('haiti')) {
-    return { ...TEAMS.HAI, logoUrl: compactImage(logoUrl) };
-  }
+function guessTeam(name: string, logoUrl?: string | null): Team {
+  const code = identifyTeamCode(name);
 
-  if (normalized.includes('scotland') || normalized.includes('escócia') || normalized.includes('escocia')) {
-    return { ...TEAMS.SCO, logoUrl: compactImage(logoUrl) };
-  }
+  if (code === 'BRA') return { ...TEAMS.BRA, logoUrl: compactImage(logoUrl) };
+  if (code === 'MAR') return { ...TEAMS.MAR, logoUrl: compactImage(logoUrl) };
+  if (code === 'HAI') return { ...TEAMS.HAI, logoUrl: compactImage(logoUrl) };
+  if (code === 'SCO') return { ...TEAMS.SCO, logoUrl: compactImage(logoUrl) };
 
   return {
     name,
@@ -151,16 +167,24 @@ function isBrazilMatch(match: Match): boolean {
   return match.homeTeam.code === 'BRA' || match.awayTeam.code === 'BRA';
 }
 
+function sameMatchup(a: Match, b: Match): boolean {
+  return a.homeTeam.code === b.homeTeam.code && a.awayTeam.code === b.awayTeam.code;
+}
+
+function sameDayOrClose(a: Match, b: Match): boolean {
+  const aTime = new Date(a.startsAt).getTime();
+  const bTime = new Date(b.startsAt).getTime();
+  const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+
+  return Math.abs(aTime - bTime) <= threeDaysMs;
+}
+
 function mergeMatches(apiMatches: Match[], fallbackMatches: Match[]): Match[] {
   const merged = [...fallbackMatches];
 
   apiMatches.forEach((apiMatch) => {
     const index = merged.findIndex((fallbackMatch) => {
-      const sameHome = fallbackMatch.homeTeam.code === apiMatch.homeTeam.code;
-      const sameAway = fallbackMatch.awayTeam.code === apiMatch.awayTeam.code;
-      const fallbackDay = fallbackMatch.startsAt.slice(0, 10);
-      const apiDay = apiMatch.startsAt.slice(0, 10);
-      return sameHome && sameAway && fallbackDay === apiDay;
+      return sameMatchup(fallbackMatch, apiMatch) && sameDayOrClose(fallbackMatch, apiMatch);
     });
 
     if (index >= 0) {
@@ -179,19 +203,65 @@ function mergeMatches(apiMatches: Match[], fallbackMatches: Match[]): Match[] {
   return merged.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
 }
 
-async function fetchJson(url: string): Promise<SportsDbEventsResponse | null> {
+async function fetchJson<T>(url: string): Promise<T | null> {
   try {
     const response = await fetch(url);
     if (!response.ok) return null;
-    return (await response.json()) as SportsDbEventsResponse;
+    return (await response.json()) as T;
   } catch {
     return null;
   }
 }
 
+async function fetchTeamLogoByCode(code: TeamCode): Promise<string | null> {
+  if (code === 'UNK') return null;
+  if (teamLogoCache.has(code)) return teamLogoCache.get(code) ?? null;
+
+  const names = KNOWN_TEAM_NAMES[code];
+
+  for (const name of names) {
+    const url = `${SPORTS_DB_URL}/searchteams.php?t=${encodeURIComponent(name)}`;
+    const json = await fetchJson<SportsDbTeamsResponse>(url);
+    const team = json?.teams?.[0];
+    const logo = compactImage(team?.strTeamBadge ?? team?.strTeamLogo ?? null);
+
+    if (logo) {
+      teamLogoCache.set(code, logo);
+      return logo;
+    }
+  }
+
+  teamLogoCache.set(code, null);
+  return null;
+}
+
+async function hydrateMissingTeamLogos(matches: Match[]): Promise<Match[]> {
+  const neededCodes = Array.from(
+    new Set(
+      matches
+        .flatMap((match) => [match.homeTeam, match.awayTeam])
+        .filter((team) => !team.logoUrl && team.code !== 'UNK')
+        .map((team) => team.code)
+    )
+  );
+
+  await Promise.all(neededCodes.map(fetchTeamLogoByCode));
+
+  return matches.map((match) => {
+    const homeLogo = match.homeTeam.logoUrl ?? teamLogoCache.get(match.homeTeam.code) ?? null;
+    const awayLogo = match.awayTeam.logoUrl ?? teamLogoCache.get(match.awayTeam.code) ?? null;
+
+    return {
+      ...match,
+      homeTeam: { ...match.homeTeam, logoUrl: homeLogo },
+      awayTeam: { ...match.awayTeam, logoUrl: awayLogo }
+    };
+  });
+}
+
 async function fetchSeasonBrazilMatches(): Promise<Match[]> {
   const url = `${SPORTS_DB_URL}/eventsseason.php?id=${WORLD_CUP_LEAGUE_ID}&s=${SEASON}`;
-  const json = await fetchJson(url);
+  const json = await fetchJson<SportsDbEventsResponse>(url);
   const events = json?.events ?? json?.event ?? [];
 
   return events
@@ -204,7 +274,7 @@ async function fetchBrazilMatchesByFallbackDays(): Promise<Match[]> {
   const days = Array.from(new Set(FALLBACK_BRAZIL_MATCHES.map((match) => match.startsAt.slice(0, 10))));
   const requests = days.map(async (day) => {
     const url = `${SPORTS_DB_URL}/eventsday.php?d=${day}&l=${WORLD_CUP_LEAGUE_ID}`;
-    const json = await fetchJson(url);
+    const json = await fetchJson<SportsDbEventsResponse>(url);
     return json?.events ?? json?.event ?? [];
   });
 
@@ -224,10 +294,9 @@ export async function fetchBrazilMatches(): Promise<Match[]> {
   ]);
 
   const apiMatches = [...seasonMatches, ...dayMatches];
+  const mergedMatches = apiMatches.length === 0
+    ? FALLBACK_BRAZIL_MATCHES
+    : mergeMatches(apiMatches, FALLBACK_BRAZIL_MATCHES);
 
-  if (apiMatches.length === 0) {
-    return FALLBACK_BRAZIL_MATCHES;
-  }
-
-  return mergeMatches(apiMatches, FALLBACK_BRAZIL_MATCHES);
+  return hydrateMissingTeamLogos(mergedMatches);
 }

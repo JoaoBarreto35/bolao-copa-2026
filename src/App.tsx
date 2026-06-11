@@ -143,6 +143,7 @@ function App() {
           isAdmin={Boolean(session)}
           selectedMatch={displayMatch}
           matches={matches}
+          guesses={guesses}
           onSelectMatch={(match) => setSelectedMatchId(match.id)}
           onAddGuess={handleAddGuess}
           onLogin={handleLogin}
