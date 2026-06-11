@@ -24,7 +24,7 @@ export function HomePage({ match, guesses, isAdmin, loading, onTogglePaid, onDel
       <section className="hero-card">
         <div className="hero-copy">
           <span className="eyebrow">Copa do Mundo 2026 • Bolão da família Barreto</span>
-          <h1>Rumo ao Hexa.</h1>
+          <h1>Brasil jogando e familia reunida, nada melhor</h1>
           <p>
             Cada palpite custa R$ 10. Se duas ou mais pessoas acertarem o placar, o prêmio é dividido igualmente.
           </p>
@@ -54,7 +54,7 @@ export function HomePage({ match, guesses, isAdmin, loading, onTogglePaid, onDel
             <span>😅</span>
             <div>
               <strong>Ninguém acertou esse placar.</strong>
-              <p>Você decide se acumula ou se faz outro combinado com a família.</p>
+              <p>O dinheiro será devolvido.</p>
             </div>
           </div>
         )}
