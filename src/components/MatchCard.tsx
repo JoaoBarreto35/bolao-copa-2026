@@ -30,7 +30,8 @@ export function MatchCard({ match, compact = false, selected = false, onSelect }
     <>
       <div className="match-topline">
         <span className={`status-pill ${match.status}`}>{statusLabel(match)}</span>
-        <span>{formatDateTime(match.startsAt)}</span>
+        {/* <span>{formatDateTime(match.startsAt)}</span> */}
+        <span>19h00</span>
       </div>
 
       <div className="scoreboard">
