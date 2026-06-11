@@ -54,7 +54,7 @@ export function AdminPage({ isAdmin, selectedMatch, matches, guesses, onSelectMa
           <div className="section-heading">
             <span>Acesso do organizador</span>
             <h1>Entrar para mexer no bolão</h1>
-            <p>A tela é simples mesmo: só você precisa ver isso. Sem login, a família continua vendo tudo normalmente.</p>
+            <p>Apenas para o organizador.</p>
           </div>
 
           {!isSupabaseConfigured && (
