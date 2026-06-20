@@ -32,7 +32,7 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     city: 'Philadelphia',
     status: 'live',
     minute: null,
-    homeScore: 2,
+    homeScore: 3,
     awayScore: 0,
     round: 'Fase de grupos'
   },
