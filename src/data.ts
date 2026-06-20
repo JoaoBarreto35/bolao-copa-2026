@@ -30,7 +30,7 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     startsAt: '2026-06-19T21:30:00-03:00',
     stadium: 'Philadelphia Stadium',
     city: 'Philadelphia',
-    status: 'live',
+    status: 'finished',
     minute: null,
     homeScore: 3,
     awayScore: 0,
