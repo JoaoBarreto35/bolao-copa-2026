@@ -55,9 +55,9 @@ const FORCED_SCOTLAND_SCORE = 0;
 const FORCED_BRAZIL_SCORE = 3;
 
 const FORCED_SCOTLAND_BRAZIL_STATUS: MatchStatus =
-  'live';
+  'finished';
 
-const FORCED_SCOTLAND_BRAZIL_MINUTE = 45;
+const FORCED_SCOTLAND_BRAZIL_MINUTE = 90;
 
 type SportsDbEvent = {
   idEvent?: string | null;
