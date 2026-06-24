@@ -45,8 +45,8 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     city: 'Miami',
     status: 'scheduled',
     minute: null,
-    homeScore: null,
-    awayScore: null,
+    homeScore: 0,
+    awayScore: 2,
     round: 'Fase de grupos'
   }
 ];
