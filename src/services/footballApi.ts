@@ -406,16 +406,17 @@ function isBrazilMatch(
   );
 }
 
-function sameMatchup(
-  a: Match,
-  b: Match
-): boolean {
-  return (
+function sameMatchup(a: Match, b: Match): boolean {
+  const sameOrder =
     a.homeTeam.code === b.homeTeam.code &&
-    a.awayTeam.code === b.awayTeam.code
-  );
-}
+    a.awayTeam.code === b.awayTeam.code;
 
+  const reversedOrder =
+    a.homeTeam.code === b.awayTeam.code &&
+    a.awayTeam.code === b.homeTeam.code;
+
+  return sameOrder || reversedOrder;
+}
 function sameDayOrClose(
   a: Match,
   b: Match
