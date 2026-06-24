@@ -17,10 +17,10 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     startsAt: '2026-06-13T19:00:00-03:00',
     stadium: 'MetLife Stadium',
     city: 'New York/New Jersey',
-    status: 'scheduled',
+    status: 'finished',
     minute: null,
-    homeScore: null,
-    awayScore: null,
+    homeScore: 1,
+    awayScore: 1,
     round: 'Fase de grupos'
   },
   {
@@ -43,10 +43,10 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     startsAt: '2026-06-24T19:00:00-03:00',
     stadium: 'Miami Stadium',
     city: 'Miami',
-    status: 'scheduled',
+    status: 'finishef',
     minute: null,
     homeScore: 0,
-    awayScore: 2,
+    awayScore: 3,
     round: 'Fase de grupos'
   }
 ];
