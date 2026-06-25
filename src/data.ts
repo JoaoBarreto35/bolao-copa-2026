@@ -43,7 +43,7 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     startsAt: '2026-06-24T19:00:00-03:00',
     stadium: 'Miami Stadium',
     city: 'Miami',
-    status: 'live',
+    status: 'finished',
     minute: null,
     homeScore: 0,
     awayScore: 3,
