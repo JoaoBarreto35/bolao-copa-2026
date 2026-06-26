@@ -113,7 +113,7 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
      * - minuto;
      * - apiFixtureId.
      */
-    id: 'bra-r32-2026-06-29',
+    id: 'bra-jpn-2026-06-29',
     homeTeam: TEAMS.BRA,
     awayTeam: TEAMS.TBD,
     startsAt: '2026-06-29T14:00:00-03:00',
