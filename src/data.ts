@@ -28,7 +28,19 @@ export const TEAMS: Record<string, Team> = {
     name: 'Escócia',
     shortName: 'Escócia',
     code: 'SCO',
-    flag: '🏴'
+    flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿'
+  },
+  JPN: {
+    name: 'Japão',
+    shortName: 'Japão',
+    code: 'JPN',
+    flag: '🇯🇵'
+  },
+  NOR: {
+    name: 'Noruega',
+    shortName: 'Noruega',
+    code: 'NOR',
+    flag: '🇧🇻'
   },
 
   TBD: {
