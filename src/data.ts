@@ -119,10 +119,23 @@ export const FALLBACK_BRAZIL_MATCHES: Match[] = [
     startsAt: '2026-06-29T14:00:00-03:00',
     stadium: 'Houston Stadium',
     city: 'Houston',
+    status: 'finished',
+    minute: null,
+    homeScore: 2,
+    awayScore: 1,
+    round: 'Fase de 32'
+  },
+  {
+    id: 'bra-nor-2026-07-05',
+    homeTeam: TEAMS.BRA,
+    awayTeam: TEAMS.TBD,
+    startsAt: '2026-07-05T17:00:00-03:00',
+    stadium: 'Houston Stadium',
+    city: 'NY',
     status: 'scheduled',
     minute: null,
     homeScore: null,
     awayScore: null,
-    round: 'Fase de 32'
+    round: 'Oitavas'
   }
 ];
